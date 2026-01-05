@@ -1,5 +1,7 @@
 package bridge.view;
 
+import bridge.BridgeGame;
+
 public class OutputView {
 
     private static final String NEW_LINE = System.lineSeparator();
@@ -10,10 +12,13 @@ public class OutputView {
         System.out.println(BRIDGE_CROSS_GAME_START_MESSAGE);
         printNewLine();
     }
-    public void printMap() {
+    public void printMap(String mapResult) {
+        System.out.println(mapResult);
+        printNewLine();
     }
 
-    public void printResult() {
+    public void printResult(String result) {
+
     }
 
     public void printErrorMessage(String message) {

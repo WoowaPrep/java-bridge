@@ -1,23 +1,63 @@
 package bridge;
 
-/**
- * 다리 건너기 게임을 관리하는 클래스
- */
 public class BridgeGame {
 
-    /**
-     * 사용자가 칸을 이동할 때 사용하는 메서드
-     * <p>
-     * 이동을 위해 필요한 메서드의 반환 타입(return type), 인자(parameter)는 자유롭게 추가하거나 변경할 수 있다.
-     */
-    public void move() {
+    private BridgeNumberGenerator bridgeNumberGenerator;
+
+    public BridgeGame(BridgeNumberGenerator bridgeNumberGenerator) {
+        this.bridgeNumberGenerator = bridgeNumberGenerator;
     }
 
-    /**
-     * 사용자가 게임을 다시 시도할 때 사용하는 메서드
-     * <p>
-     * 재시작을 위해 필요한 메서드의 반환 타입(return type), 인자(parameter)는 자유롭게 추가하거나 변경할 수 있다.
-     */
-    public void retry() {
+    public String move(String gameDirections, String matchHistory) {
+        int round = matchHistory.length();
+
+        String upperMap = makeMap(gameDirections, matchHistory, round, 'U');
+        String lowerMap = makeMap(gameDirections, matchHistory, round, 'D');
+        return upperMap + lowerMap;
+    }
+
+    private String makeMap(String directionHistory, String matchHistory, int round, char direction) {
+        StringBuilder map = new StringBuilder("[");
+
+        for (int i = 0; i < round; i++) {
+            mapBuild(directionHistory, matchHistory, direction, i, map);
+
+            if (i < round - 1) {
+                map.append("|");
+            }
+        }
+
+        map.append("]").append("%n");
+        return map.toString();
+    }
+
+    private void mapBuild(String directionHistory, String matchHistory,
+            char direction, int i, StringBuilder map) {
+        char marker = matchHistory.charAt(i);
+        char whatDir = directionHistory.charAt(i);
+
+        if (whatDir == direction) {
+            map.append(" ").append(marker).append(" ");
+            return;
+        }
+        map.append("   ");
+    }
+
+    public String createMatchHistory(String gameDirections, String directions) {
+        StringBuilder matchHistory = new StringBuilder();
+
+        for (int i = 0; i < directions.length(); i++) {
+            if (gameDirections.charAt(i) == directions.charAt(i)) {
+                matchHistory.append("O");
+                continue;
+            }
+            matchHistory.append("X");
+        }
+
+        return matchHistory.toString();
+    }
+
+    public boolean retry(String matchHistory) {
+        return matchHistory.contains("X");
     }
 }

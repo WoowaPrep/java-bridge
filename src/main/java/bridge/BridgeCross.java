@@ -5,30 +5,44 @@ import bridge.view.InputView;
 import bridge.view.OutputView;
 import java.util.List;
 import java.util.function.Supplier;
-import java.util.stream.IntStream;
 
 public class BridgeCross {
 
     private InputView inputView;
     private OutputView outputView;
     private InputParser inputParser;
+    private BridgeGame bridgeGame;
 
     public BridgeCross() {
-        this(new InputView(), new OutputView(), new InputParser());
+        this(new InputView(), new OutputView(), new InputParser(), new BridgeGame(new BridgeRandomNumberGenerator()));
     }
 
-    public BridgeCross(InputView inputView, OutputView outputView, InputParser inputParser) {
+    public BridgeCross(InputView inputView, OutputView outputView, InputParser inputParser, BridgeGame bridgeGame) {
         this.inputView = inputView;
         this.outputView = outputView;
         this.inputParser = inputParser;
+        this.bridgeGame = bridgeGame;
     }
 
     public void start() {
         outputView.printBridgeCrossGameHeader();
+
         int bridgeSize = readBridgeSize();
+        List<String> directions = createBridge(bridgeSize);
+        String gameDirections = String.join("", directions);
+
+        boolean isContinue;
+        do{
+            isContinue = readMoving(gameDirections, bridgeSize);
+        } while (isContinue);
+
+//        String bridgeGameResult = bridgeGame.createGameResult(gameDirections);
+//        outputView.printResult(bridgeGameResult);
+    }
+
+    private List<String> createBridge(int bridgeSize) {
         BridgeNumberGenerator bridgeNumberGenerator = new BridgeRandomNumberGenerator();
-        List<String> bridge = new BridgeMaker(bridgeNumberGenerator).makeBridge(bridgeSize);
-        readMoving(bridge.get(0), bridgeSize, bridgeNumberGenerator);
+        return new BridgeMaker(bridgeNumberGenerator).makeBridge(bridgeSize);
     }
 
     private int readBridgeSize() {
@@ -39,21 +53,40 @@ public class BridgeCross {
         });
     }
 
-    private void readMoving(String bridge, int count, BridgeNumberGenerator bridgeNumberGenerator) {
-        IntStream.range(0, count)
-                .forEach(i -> {
-                    retry(() -> {
-                        String movingDirection = inputView.readMoving();
-                        inputView.printNewLine();
-                        inputParser.parseMovingDirection(movingDirection);
-//                        int isUpper = bridgeNumberGenerator.generate();
-//                        if (isUpper == 1 && movingDirection.equals("U") || isUpper == 0 && movingDirection.equals("D")) {
-//
-//                        }
+    private boolean readMoving(String gameDirections, int count) {
+        String directions = "";
+        for (int i = 0; i < count; i++) {
+            String direction = readMovingDirection();
+            directions += direction;
+            String matchHistory = bridgeGame.createMatchHistory(gameDirections, directions);
+            String mapResult = bridgeGame.move(gameDirections, matchHistory);
+            outputView.printMap(mapResult);
+            if (bridgeGame.retry(matchHistory)) {
+                return handleRetry();
+            }
+        }
+        return false;
+    }
 
-                        return null;
-                    });
-                });
+    private String readMovingDirection() {
+        return retry(() -> {
+            String movingDirection = inputView.readMoving();
+            inputView.printNewLine();
+            return inputParser.parseMovingDirection(movingDirection);
+        });
+    }
+
+    private String readGameCommand() {
+        return retry(() -> {
+            String shouldRetry = inputView.readGameCommand();
+            inputView.printNewLine();
+            return inputParser.parseRetry(shouldRetry);
+        });
+    }
+
+    private boolean handleRetry() {
+        String command = readGameCommand();
+        return command.equals("R");
     }
 
     private <T> T retry(Supplier<T> supplier) {

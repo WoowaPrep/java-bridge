@@ -7,6 +7,7 @@ public enum ErrorMessage {
 
     INVALID_BRIDGE_LENGTH("다리의 길이는 2이상 20이하 어야 합니다."),
     INVALID_MOVING_DIRECTION("이동할 방향은 U 또는 D여야 합니다."),
+    INVALID_RETRY("게임 재시도 여부는 R 또는 Q여야 합니다."),
     ;
 
     private static final String PREFIX = "[ERROR] ";

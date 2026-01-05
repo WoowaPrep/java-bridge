@@ -23,6 +23,19 @@ public class InputParser {
         return input;
     }
 
+    public String parseRetry(String input) {
+        validateNotEmpty(input);
+        validateRetry(input);
+        return input;
+    }
+
+    private void validateRetry(String input) {
+        if (input.equals("R") || input.equals("Q")) {
+            return;
+        }
+        throw BridgeException.from(ErrorMessage.INVALID_RETRY);
+    }
+
     private void validateDirection(String input) {
         if (input.equals("U") || input.equals("D")) {
             return;
