@@ -6,7 +6,10 @@ public class InputView {
 
     private final static String NEW_LINE = System.lineSeparator();
 
+    private final static String BRIDGE_LENGTH_INPUT_MESSAGE = "다리의 길이를 입력해주세요.";
+
     public String readBridgeSize() {
+        System.out.println(BRIDGE_LENGTH_INPUT_MESSAGE);
         return readLine();
     }
 
@@ -22,7 +25,7 @@ public class InputView {
         return Console.readLine();
     }
 
-    private void printNewLine() {
+    public void printNewLine() {
         System.out.printf(NEW_LINE);
     }
 }

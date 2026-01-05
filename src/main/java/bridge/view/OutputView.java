@@ -20,7 +20,7 @@ public class OutputView {
         System.out.println(message);
     }
 
-    private void printNewLine() {
+    public void printNewLine() {
         System.out.printf(NEW_LINE);
     }
 }

@@ -3,7 +3,9 @@ package bridge;
 import bridge.view.InputParser;
 import bridge.view.InputView;
 import bridge.view.OutputView;
+import java.util.List;
 import java.util.function.Supplier;
+import java.util.stream.IntStream;
 
 public class BridgeCross {
 
@@ -24,14 +26,23 @@ public class BridgeCross {
     public void start() {
         outputView.printBridgeCrossGameHeader();
         int bridgeSize = readBridgeSize();
-
+        List<String> bridge = new BridgeMaker(new BridgeRandomNumberGenerator()).makeBridge(bridgeSize);
+        readMoving(bridge.get(0), bridgeSize);
     }
 
     private int readBridgeSize() {
         return retry(() -> {
             String bridgeSizeInput = inputView.readBridgeSize();
+            inputView.printNewLine();
             return inputParser.parseBridgeSize(bridgeSizeInput);
         });
+    }
+
+    private void readMoving(String bridge, int count) {
+        IntStream.range(0, count)
+                .forEach(i -> {
+
+                });
     }
 
     private <T> T retry(Supplier<T> supplier) {
