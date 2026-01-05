@@ -3,6 +3,7 @@ package bridge;
 import bridge.view.InputParser;
 import bridge.view.InputView;
 import bridge.view.OutputView;
+import java.util.function.Supplier;
 
 public class BridgeCross {
 
@@ -23,9 +24,23 @@ public class BridgeCross {
     public void start() {
         outputView.printBridgeCrossGameHeader();
         int bridgeSize = readBridgeSize();
+
     }
 
     private int readBridgeSize() {
-        return 0;
+        return retry(() -> {
+            String bridgeSizeInput = inputView.readBridgeSize();
+            return inputParser.parseBridgeSize(bridgeSizeInput);
+        });
+    }
+
+    private <T> T retry(Supplier<T> supplier) {
+        while (true) {
+            try {
+                return supplier.get();
+            } catch (IllegalArgumentException e) {
+                outputView.printErrorMessage(e.getMessage());
+            }
+        }
     }
 }

@@ -6,9 +6,8 @@ public class InputView {
 
     private final static String NEW_LINE = System.lineSeparator();
 
-    public int readBridgeSize() {
-
-        return 0;
+    public String readBridgeSize() {
+        return readLine();
     }
 
     public String readMoving() {

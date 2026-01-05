@@ -2,7 +2,10 @@ package bridge.exception;
 
 public enum ErrorMessage {
 
-    DAY_OUT_OF_RANGE("유효한 날짜 범위가 아닙니다."),
+    EMPTY_INPUT("입력값이 비어있습니다."),
+    INVALID_NUMBER_FORMAT("숫자 형식이 올바르지 않습니다."),
+
+    INVALID_BRIDGE_LENGTH("다리의 길이는 2이상 20이하 어야 합니다."),
     ;
 
     private static final String PREFIX = "[ERROR] ";
