@@ -26,8 +26,9 @@ public class BridgeCross {
     public void start() {
         outputView.printBridgeCrossGameHeader();
         int bridgeSize = readBridgeSize();
-        List<String> bridge = new BridgeMaker(new BridgeRandomNumberGenerator()).makeBridge(bridgeSize);
-        readMoving(bridge.get(0), bridgeSize);
+        BridgeNumberGenerator bridgeNumberGenerator = new BridgeRandomNumberGenerator();
+        List<String> bridge = new BridgeMaker(bridgeNumberGenerator).makeBridge(bridgeSize);
+        readMoving(bridge.get(0), bridgeSize, bridgeNumberGenerator);
     }
 
     private int readBridgeSize() {
@@ -38,10 +39,20 @@ public class BridgeCross {
         });
     }
 
-    private void readMoving(String bridge, int count) {
+    private void readMoving(String bridge, int count, BridgeNumberGenerator bridgeNumberGenerator) {
         IntStream.range(0, count)
                 .forEach(i -> {
+                    retry(() -> {
+                        String movingDirection = inputView.readMoving();
+                        inputView.printNewLine();
+                        inputParser.parseMovingDirection(movingDirection);
+//                        int isUpper = bridgeNumberGenerator.generate();
+//                        if (isUpper == 1 && movingDirection.equals("U") || isUpper == 0 && movingDirection.equals("D")) {
+//
+//                        }
 
+                        return null;
+                    });
                 });
     }
 

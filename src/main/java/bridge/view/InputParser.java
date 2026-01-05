@@ -17,6 +17,18 @@ public class InputParser {
         return Integer.parseInt(input);
     }
 
+    public String parseMovingDirection(String input) {
+        validateNotEmpty(input);
+        validateDirection(input);
+        return input;
+    }
+
+    private void validateDirection(String input) {
+        if (input.equals("U") || input.equals("D")) {
+            return;
+        }
+        throw BridgeException.from(ErrorMessage.INVALID_MOVING_DIRECTION);
+    }
     private void validateNotEmpty(String input) {
         if (input == null || input.trim().isEmpty()) {
             throw BridgeException.from(ErrorMessage.EMPTY_INPUT);
