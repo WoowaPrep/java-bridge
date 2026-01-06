@@ -1,6 +1,21 @@
 package bridge;
 
+import java.util.stream.IntStream;
+
 public class BridgeGame {
+
+    private final static String NEW_LINE = System.lineSeparator();
+    public static final String SPACE = " ";
+
+    private static final String MATCH_MARKER = "O";
+    private static final String UN_MATCH_MARKER = "X";
+
+    private static final String BRIDGE_START_MARKER = "[";
+    private static final String BRIDGE_END_MARKER = "]";
+    public static final String BRIDGE_PIPE = "|";
+
+    private static final char MOVING_UP_COMMEND = 'U';
+    private static final char MOVING_DOWN_COMMEND = 'D';
 
     private BridgeNumberGenerator bridgeNumberGenerator;
 
@@ -8,26 +23,25 @@ public class BridgeGame {
         this.bridgeNumberGenerator = bridgeNumberGenerator;
     }
 
-    public String move(String gameDirections, String matchHistory) {
+    public String createRound(String gameDirections, String matchHistory) {
         int round = matchHistory.length();
 
-        String upperMap = makeMap(gameDirections, matchHistory, round, 'U');
-        String lowerMap = makeMap(gameDirections, matchHistory, round, 'D');
-        return upperMap + lowerMap;
+        String upperBridge = makeBridge(gameDirections, matchHistory, round, MOVING_UP_COMMEND);
+        String lowerBridge  = makeBridge(gameDirections, matchHistory, round, MOVING_DOWN_COMMEND);
+        return upperBridge + lowerBridge;
     }
 
-    private String makeMap(String directionHistory, String matchHistory, int round, char direction) {
-        StringBuilder map = new StringBuilder("[");
+    private String makeBridge(String directionHistory, String matchHistory, int round, char direction) {
+        StringBuilder map = new StringBuilder(BRIDGE_START_MARKER);
 
-        for (int i = 0; i < round; i++) {
+        IntStream.range(0, round).forEach(i -> {
             mapBuild(directionHistory, matchHistory, direction, i, map);
-
             if (i < round - 1) {
-                map.append("|");
+                map.append(BRIDGE_PIPE);
             }
-        }
+        });
 
-        map.append("]").append("%n");
+        map.append(BRIDGE_END_MARKER).append(NEW_LINE);
         return map.toString();
     }
 
@@ -37,27 +51,27 @@ public class BridgeGame {
         char whatDir = directionHistory.charAt(i);
 
         if (whatDir == direction) {
-            map.append(" ").append(marker).append(" ");
+            map.append(SPACE).append(marker).append(SPACE);
             return;
         }
-        map.append("   ");
+        map.append(SPACE).append(SPACE).append(SPACE);
     }
 
     public String createMatchHistory(String gameDirections, String directions) {
         StringBuilder matchHistory = new StringBuilder();
+        int movingCount = directions.length();
 
-        for (int i = 0; i < directions.length(); i++) {
+        IntStream.range(0, movingCount).forEach(i -> {
             if (gameDirections.charAt(i) == directions.charAt(i)) {
-                matchHistory.append("O");
-                continue;
+                matchHistory.append(MATCH_MARKER);
+                return;
             }
-            matchHistory.append("X");
-        }
+            matchHistory.append(UN_MATCH_MARKER);
+        });
 
         return matchHistory.toString();
     }
 
-    public boolean retry(String matchHistory) {
-        return matchHistory.contains("X");
+    public void retry(String input) {
     }
 }

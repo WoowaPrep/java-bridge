@@ -28,21 +28,38 @@ public class BridgeCross {
         outputView.printBridgeCrossGameHeader();
 
         int bridgeSize = readBridgeSize();
-        List<String> directions = createBridge(bridgeSize);
-        String gameDirections = String.join("", directions);
+        String gameDirections = createBridge(bridgeSize);
 
-        boolean isContinue;
-        do{
-            isContinue = readMoving(gameDirections, bridgeSize);
-        } while (isContinue);
-
-//        String bridgeGameResult = bridgeGame.createGameResult(gameDirections);
-//        outputView.printResult(bridgeGameResult);
+        GameFinalStatus gameFinalStatus = play(gameDirections, bridgeSize);
+        outputView.printResult(gameFinalStatus);
     }
 
-    private List<String> createBridge(int bridgeSize) {
+    private GameFinalStatus play(String gameDirections, int bridgeSize) {
+        GameStatus gameStatus = GameStatus.COMPLETE;
+        String finalRoundBridge = null;
+        int tryCount = 0;
+
+        do{
+            GameRoundStatus status = readMoving(gameDirections, bridgeSize);
+            String userDirections = status.getDirections();
+
+            String matchHistory = bridgeGame.createMatchHistory(gameDirections, userDirections);
+            String roundBridge = bridgeGame.createRound(gameDirections, matchHistory);
+            outputView.printMap(roundBridge);
+
+            if (status.getGameStatus() == GameStatus.RESTART) gameStatus = readGameCommand();
+            if (gameStatus != GameStatus.RESTART) finalRoundBridge = roundBridge;
+            tryCount++;
+
+        } while (gameStatus == GameStatus.RESTART);
+
+        return new GameFinalStatus(finalRoundBridge, gameStatus, tryCount);
+    }
+
+    private String createBridge(int bridgeSize) {
         BridgeNumberGenerator bridgeNumberGenerator = new BridgeRandomNumberGenerator();
-        return new BridgeMaker(bridgeNumberGenerator).makeBridge(bridgeSize);
+        List<String> directions = new BridgeMaker(bridgeNumberGenerator).makeBridge(bridgeSize);
+        return String.join("", directions);
     }
 
     private int readBridgeSize() {
@@ -53,22 +70,21 @@ public class BridgeCross {
         });
     }
 
-    private boolean readMoving(String gameDirections, int count) {
-        String directions = "";
+    private GameRoundStatus readMoving(String gameDirections, int count) {
+        StringBuilder userDirections = new StringBuilder();
+
         for (int i = 0; i < count; i++) {
-            String direction = readMovingDirection();
-            directions += direction;
-            String matchHistory = bridgeGame.createMatchHistory(gameDirections, directions);
-            String mapResult = bridgeGame.move(gameDirections, matchHistory);
-            outputView.printMap(mapResult);
-            if (bridgeGame.retry(matchHistory)) {
-                return handleRetry();
+            char userDirection = readMovingDirection();
+            userDirections.append(userDirection);
+            if (gameDirections.charAt(i) != userDirection) {
+                return new GameRoundStatus(userDirections.toString(), GameStatus.RESTART);
             }
         }
-        return false;
+
+        return new GameRoundStatus(userDirections.toString(), GameStatus.COMPLETE);
     }
 
-    private String readMovingDirection() {
+    private char readMovingDirection() {
         return retry(() -> {
             String movingDirection = inputView.readMoving();
             inputView.printNewLine();
@@ -76,17 +92,12 @@ public class BridgeCross {
         });
     }
 
-    private String readGameCommand() {
+    private GameStatus readGameCommand() {
         return retry(() -> {
-            String shouldRetry = inputView.readGameCommand();
+            String commend = inputView.readGameCommand();
             inputView.printNewLine();
-            return inputParser.parseRetry(shouldRetry);
+            return inputParser.parseGameCommend(commend);
         });
-    }
-
-    private boolean handleRetry() {
-        String command = readGameCommand();
-        return command.equals("R");
     }
 
     private <T> T retry(Supplier<T> supplier) {

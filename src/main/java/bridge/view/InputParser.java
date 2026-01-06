@@ -1,5 +1,6 @@
 package bridge.view;
 
+import bridge.GameStatus;
 import bridge.exception.BridgeException;
 import bridge.exception.ErrorMessage;
 
@@ -10,6 +11,11 @@ public class InputParser {
     private static final int MIN_BRIDGE_LENGTH = 3;
     private static final int MAX_BRIDGE_LENGTH = 20;
 
+    private static final String GAME_RESTART_COMMEND = "R";
+    private static final String GAME_QUIT_COMMEND = "Q";
+    private static final String MOVING_UP_COMMEND = "U";
+    private static final String MOVING_DOWN_COMMEND = "D";
+
     public int parseBridgeSize(String input) {
         validateNotEmpty(input);
         validateNumeric(input);
@@ -17,27 +23,26 @@ public class InputParser {
         return Integer.parseInt(input);
     }
 
-    public String parseMovingDirection(String input) {
+    public char parseMovingDirection(String input) {
         validateNotEmpty(input);
         validateDirection(input);
-        return input;
+        return input.charAt(0);
     }
 
-    public String parseRetry(String input) {
+    public GameStatus parseGameCommend(String input) {
         validateNotEmpty(input);
-        validateRetry(input);
-        return input;
+        return validateGameCommend(input);
     }
 
-    private void validateRetry(String input) {
-        if (input.equals("R") || input.equals("Q")) {
-            return;
-        }
+    private GameStatus validateGameCommend(String input) {
+        if (input.equals(GAME_RESTART_COMMEND)) return GameStatus.RESTART;
+        if (input.equals(GAME_QUIT_COMMEND)) return GameStatus.QUIT;
+
         throw BridgeException.from(ErrorMessage.INVALID_RETRY);
     }
 
     private void validateDirection(String input) {
-        if (input.equals("U") || input.equals("D")) {
+        if (input.equals(MOVING_UP_COMMEND) || input.equals(MOVING_DOWN_COMMEND)) {
             return;
         }
         throw BridgeException.from(ErrorMessage.INVALID_MOVING_DIRECTION);
