@@ -1,5 +1,12 @@
 package bridge;
 
+import bridge.domain.BridgeGame;
+import bridge.domain.BridgeMaker;
+import bridge.domain.BridgeNumberGenerator;
+import bridge.domain.BridgeRandomNumberGenerator;
+import bridge.domain.GameFinalStatus;
+import bridge.domain.GameRoundStatus;
+import bridge.domain.GameStatus;
 import bridge.view.InputParser;
 import bridge.view.InputView;
 import bridge.view.OutputView;

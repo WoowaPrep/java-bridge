@@ -1,7 +1,7 @@
 package bridge.view;
 
-import bridge.GameFinalStatus;
-import bridge.GameStatus;
+import bridge.domain.GameFinalStatus;
+import bridge.domain.GameStatus;
 
 public class OutputView {
 

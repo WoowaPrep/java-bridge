@@ -1,6 +1,6 @@
 package bridge.view;
 
-import bridge.GameStatus;
+import bridge.domain.GameStatus;
 import bridge.exception.BridgeException;
 import bridge.exception.ErrorMessage;
 

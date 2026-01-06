@@ -1,4 +1,6 @@
-package bridge;
+package bridge.domain;
+
+import bridge.domain.GameStatus;
 
 public class GameFinalStatus {
 
